@@ -1,8 +1,23 @@
 version: 2.1
 
 orbs:
-  node: circleci/node:4.1
   slack: circleci/slack@4.10.1
+
+commands:
+  failure_notification:
+    steps:
+      - slack/notify:
+          event: fail
+          channel: C03DAJYL3SM
+          template: basic_fail_1
+  success_notifications:
+    docker: 
+      - image: cimg/base:stable
+    steps:
+      - slack/notify:
+          event: pass
+          channel: C03DAJYL3SM
+          template: success_tagged_deployment_1
 
 
 jobs: 
@@ -24,10 +39,7 @@ jobs:
           paths:
             - "frontend/node_modules"
           key: frontend-build
-      - slack/notify:
-          channel: C03DAJYL3SM
-          event: fail
-          template: basic_fail_1
+      - failure_notification
   
   build-backend:
     docker:
@@ -47,10 +59,7 @@ jobs:
           paths:
             - "frontend/node_modules"
           key: backend-build
-      - slack/notify:
-          channel: C03DAJYL3SM
-          event: fail
-          template: basic_fail_1
+      - failure_notification
     
   test-frontend:
     docker:
@@ -66,10 +75,7 @@ jobs:
             cd frontend
             npm install
             npm run test
-      - slack/notify:
-          channel: C03DAJYL3SM
-          event: fail
-          template: basic_fail_1
+      - failure_notification
     
   test-backend:
     docker: 
@@ -85,10 +91,7 @@ jobs:
             cd backend
             npm install
             npm run test
-      - slack/notify:
-          channel: C03DAJYL3SM
-          event: fail
-          template: basic_fail_1
+      - failure_notification
   
   scan-frontend: 
     docker:
@@ -105,11 +108,8 @@ jobs:
             npm install
             npm audit fix --audit-level=critical --force
             npm audit --audit-level=critical
-      - slack/notify:
-          channel: C03DAJYL3SM
-          event: fail
-          template: basic_fail_1
-  
+      - failure_notification
+
   scan-backend:
     docker:
       - image: circleci/node:13.8.0
@@ -126,10 +126,7 @@ jobs:
             npm audit fix --force --audit-level=critical
             npm audit fix --force --audit-level=critical
             npm audit --audit-level=critical
-      - slack/notify:
-          channel: C03DAJYL3SM
-          event: fail
-          template: basic_fail_1
+      - failure_notification
 
 workflows:
   default:
@@ -148,3 +145,7 @@ workflows:
       - scan-backend:
           requires:
             - "build-backend"
+      - success_notifications:
+          requires:
+            - test-backend
+            - test-frontend
