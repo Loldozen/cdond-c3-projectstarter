@@ -13,7 +13,7 @@ commands:
 
 
 jobs:
- 
+
   success_notifications:
     docker: 
       - image: cimg/base:stable
@@ -148,6 +148,7 @@ workflows:
           requires:
             - "build-backend"
       - success_notifications:
+          context: SlackNotification
           requires:
             - test-backend
             - test-frontend
