@@ -10,6 +10,10 @@ commands:
           event: fail
           channel: C03DAJYL3SM
           template: basic_fail_1
+
+
+jobs:
+ 
   success_notifications:
     docker: 
       - image: cimg/base:stable
@@ -19,8 +23,6 @@ commands:
           channel: C03DAJYL3SM
           template: success_tagged_deployment_1
 
-
-jobs: 
   build-frontend:
     docker: 
       - image: circleci/node:13.8.0
