@@ -148,7 +148,7 @@ workflows:
           requires:
             - "build-backend"
       - success_notifications:
-          context: SlackNotification
           requires:
             - test-backend
             - test-frontend
+          context: SlackNotification
