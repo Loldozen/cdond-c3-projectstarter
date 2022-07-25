@@ -151,4 +151,6 @@ workflows:
           requires:
             - test-backend
             - test-frontend
-          context: SlackNotification
+          context:
+            - org-global 
+            - SlackNotification
