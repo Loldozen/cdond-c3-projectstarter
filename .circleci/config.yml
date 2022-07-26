@@ -10,6 +10,17 @@ commands:
           event: fail
           channel: C03DAJYL3SM
           template: basic_fail_1
+  
+  destroy-environment:
+    description: Destroy backend and frontend cloudformation stacks
+    #parameters:
+      #exit 0
+    steps:
+      - run:
+          name: Destroy environments
+          when: on_fail
+          command: |
+            aws cloudformation delete-stack --stack-name udacity-${CIRCLE_WORKFLOW_ID:0:7} 
 
 
 jobs:
@@ -129,6 +140,40 @@ jobs:
             npm audit fix --force --audit-level=critical
             npm audit --audit-level=critical
       - failure_notification
+  
+  create-infrastructure:
+    docker: 
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run:
+          name: Ensure backend infrastructure exists
+          command: |
+            aws cloudformation deploy \ 
+            --template-file .circleci/files/backend.yml \
+            --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+            --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
+            --tags project=udapeople-project-3
+      - run:
+          name: Ensure frontend infrastructure exists
+          command: |
+            aws cloudformation deploy \
+            --template-file .circleci/files/frontend.yml \
+            --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
+            --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
+            --tags project=udapeople-project-3
+      - run:
+          name: Add backend ip to ansible inventory file
+          command: |
+            echo "[all]" > inventory.txt && \
+            aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' \
+            --filters "Name=project, Values=udapeople-project-3" 
+            --output text >> inventory.txt
+      - persist_to_workspace:
+          root: ~/ 
+          paths:
+            - "project/.circleci/ansible/inventory.txt"
+      - destroy-environment
 
 workflows:
   default:
@@ -154,3 +199,4 @@ workflows:
           context:
             - org-global 
             - SlackNotification
+      - create-infrastructure
