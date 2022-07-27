@@ -183,6 +183,35 @@ jobs:
       - destroy-environment:
           to: udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
 
+  configure-infrastructure:
+    docker:
+      - image: cimg/python:3.10.5
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints:
+            - "fa:9f:92:9c:b5:be:c9:73:06:16:2a:e6:cc:a6:9c:62"
+      - attach_workspace:
+          at: /project/.circleci/ansible/inventory.txt
+      - run:
+          name: Install Ansible
+          command: |
+            pip install ansible
+      - run:
+          name: Install AWS CLI
+          command: |
+            pip --no-cache-dir install --upgrade awscli
+      - run:
+          name: Install tar gzip
+          command: |
+            yum install -y tar gzip
+      - run:
+          name: Run ansible plays
+          command: |
+            ansible-playbook -i /project/.circleci/ansible/inventory.txt configure-server.yml
+            
+
+
 workflows:
   default:
     jobs:
@@ -207,4 +236,9 @@ workflows:
           context:
             - org-global 
             - SlackNotification
-      - create-infrastructure
+      - create-infrastructure:
+          requires:
+            - test-backend
+            - test-frontend
+            - scan-backend
+            - scan-frontend
