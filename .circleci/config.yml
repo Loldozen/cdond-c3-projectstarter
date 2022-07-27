@@ -179,7 +179,7 @@ jobs:
       - persist_to_workspace:
           root: ~/ 
           paths:
-            - "project/.circleci/ansible/inventory.txt"
+            - "/home/circleci/project/.circleci/ansible/inventory.txt"
       - destroy-environment:
           to: udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
       - destroy-environment:
@@ -193,8 +193,8 @@ jobs:
       - add_ssh_keys:
           fingerprints:
             - "fa:9f:92:9c:b5:be:c9:73:06:16:2a:e6:cc:a6:9c:62"
-      #- attach_workspace:
-          #at: /project/.circleci/ansible/inventory.txt
+      - attach_workspace:
+          at: /home/circleci/project/.circleci/ansible
       - run:
           name: Install Ansible
           command: |
@@ -211,7 +211,9 @@ jobs:
           name: Run ansible plays
           command: |
             pwd
-            ls -la
+            #ls -la
+            #ls -la ./.circleci
+            #ls -la ./.circleci/ansible 
             cd .circleci/ansible
             cat inventory.txt
             ansible-playbook -i inventory.txt configure-server.yml
