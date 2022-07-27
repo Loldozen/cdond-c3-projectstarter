@@ -22,7 +22,7 @@ commands:
           name: Destroy environments
           when: on_fail
           command: |
-            aws cloudformation delete-stack --stack-name <<parameter.to>> 
+            aws cloudformation delete-stack --stack-name <<parameters.to>> 
 
 
 jobs:
