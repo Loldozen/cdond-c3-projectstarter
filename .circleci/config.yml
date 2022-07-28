@@ -2,6 +2,9 @@ version: 2.1
 
 orbs:
   slack: circleci/slack@4.10.1
+  node: circleci/node@5.0.2
+  python: circleci/python@2.0.3
+  aws-cli: circleci/aws-cli@3.1.1
 
 commands:
   failure_notification:
@@ -249,10 +252,12 @@ jobs:
       - restore_cache:
           keys: 
             - backend-build
-      - run:
-          name: Install AWS CLI
-          command: |
-            pip --no-cache-dir install --upgrade awscli
+      - aws-cli/setup:
+          profile-name: udapeople
+      #- run:
+          #name: Install AWS CLI
+          #command: |
+            #pip --no-cache-dir install --upgrade awscli
       - run:
           name: Run migrations
           command: |
