@@ -308,6 +308,14 @@ jobs:
          #name: Install tar gzip
           #command: |
             #yum install -y tar gzip
+      - node/install:
+          install-yarn: true
+          node-version: '16.13'
+      - node/install-packages:
+          cache-path: ~/project/node_modules
+          override-ci-command: npm install
+      - run: sudo npm install -g npm@latest
+      - run: npm run test
       - run:
           name: Get backend url
           command: |
@@ -354,6 +362,14 @@ jobs:
           #name: Install tar gzip
           #command: |
             #yum install -y tar gzip
+      - node/install:
+          install-yarn: true
+          node-version: '16.13'
+      - node/install-packages:
+          cache-path: ~/project/node_modules
+          override-ci-command: npm install
+      - run: sudo npm install -g npm@latest
+      - run: npm run test
       - run: 
           name: Install dependencies
           command: |
