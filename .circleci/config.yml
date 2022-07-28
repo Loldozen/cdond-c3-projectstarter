@@ -246,6 +246,13 @@ jobs:
       - image: cimg/node:18.4.0
     steps:
       - checkout
+      - restore_cache:
+          keys: 
+            - backend-build
+      - run:
+          name: Install AWS CLI
+          command: |
+            pip --no-cache-dir install --upgrade awscli
       - run:
           name: Run migrations
           command: |
