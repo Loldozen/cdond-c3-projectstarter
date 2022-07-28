@@ -314,6 +314,7 @@ jobs:
       - node/install-packages:
           cache-path: ~/project/node_modules
           override-ci-command: npm install
+          app-dir: /frontend
       - run: sudo npm install -g npm@latest
       - run: npm run test
       - run:
@@ -368,6 +369,7 @@ jobs:
       - node/install-packages:
           cache-path: ~/project/node_modules
           override-ci-command: npm install
+          app-dir: /backend
       - run: sudo npm install -g npm@latest
       - run: npm run test
       - run: 
