@@ -304,10 +304,10 @@ jobs:
           name: Install AWS CLI
           command: |
             pip --no-cache-dir install --upgrade awscli
-      - run:
-          name: Install tar gzip
-          command: |
-            yum install -y tar gzip
+      #- run:
+         #name: Install tar gzip
+          #command: |
+            #yum install -y tar gzip
       - run:
           name: Get backend url
           command: |
