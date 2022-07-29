@@ -288,7 +288,7 @@ jobs:
   
   deploy-frontend:
     docker:
-      - image: cimg/python:3.10.5
+      - image: cimg/node:18.4.0
     steps:
       - checkout
       - add_ssh_keys:
@@ -296,27 +296,30 @@ jobs:
             - "fa:9f:92:9c:b5:be:c9:73:06:16:2a:e6:cc:a6:9c:62"
       - attach_workspace:
           at: ~/
+      - python/dist
       - run:
           name: Install Ansible
           command: |
             pip install ansible
-      - run:
-          name: Install AWS CLI
-          command: |
-            pip --no-cache-dir install --upgrade awscli
+      - aws-cli/setup:
+          profile-name: udapeople
+      #- run:
+          #name: Install AWS CLI
+          #command: |
+            #pip --no-cache-dir install --upgrade awscli
       #- run:
          #name: Install tar gzip
           #command: |
             #yum install -y tar gzip
-      - node/install:
-          install-yarn: true
-          node-version: '16.13'
-      - node/install-packages:
-          cache-path: ~/project/node_modules
-          override-ci-command: npm install
-          app-dir: /frontend
-      - run: sudo npm install -g npm@latest
-      - run: npm run test
+      #- node/install:
+          #install-yarn: true
+          #node-version: '16.13'
+      #- node/install-packages:
+          #cache-path: ~/project/node_modules
+          #override-ci-command: npm install
+          #app-dir: /frontend
+      #- run: sudo npm install -g npm@latest
+      #- run: npm run test
       - run:
           name: Get backend url
           command: |
