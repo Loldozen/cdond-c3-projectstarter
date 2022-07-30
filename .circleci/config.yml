@@ -288,7 +288,7 @@ jobs:
   
   deploy-frontend:
     docker:
-      - image: cimg/python:3.10.5
+      - image: cimg/python:3.10.5-node
     steps:
       - checkout
       - add_ssh_keys:
@@ -308,15 +308,15 @@ jobs:
          #name: Install tar gzip
           #command: |
             #yum install -y tar gzip
-      - node/install:
-          install-yarn: true
-          node-version: '16.13'
-      - node/install-packages:
-          cache-path: ~/project/node_modules
-          override-ci-command: npm install
-          app-dir: /frontend
-      - run: sudo npm install -g npm@latest
-      - run: npm run test
+      #- node/install:
+          #install-yarn: true
+          #ode-version: '16.13'
+      #- node/install-packages:
+          #cache-path: ~/project/node_modules
+          #override-ci-command: npm install
+          #app-dir: /frontend
+      #- run: sudo npm install -g npm@latest
+      #- run: npm run test
       - run:
           name: Get backend url
           command: |
@@ -343,7 +343,7 @@ jobs:
 
   deploy-backend:
     docker:
-      - image: cimg/python:3.10.5
+      - image: cimg/python:3.10.5-node
     steps:
       - checkout
       - add_ssh_keys:
@@ -363,15 +363,15 @@ jobs:
           #name: Install tar gzip
           #command: |
             #yum install -y tar gzip
-      - node/install:
-          install-yarn: true
-          node-version: '16.13'
-      - node/install-packages:
-          cache-path: ~/project/node_modules
-          override-ci-command: npm install
+      #- node/install:
+          #install-yarn: true
+          #node-version: '16.13'
+      #- node/install-packages:
+          #cache-path: ~/project/node_modules
+          #override-ci-command: npm install
           #app-dir: /backend
-      - run: sudo npm install -g npm@latest
-      - run: npm run test
+      #- run: sudo npm install -g npm@latest
+      #- run: npm run test
       - run: 
           name: Install dependencies
           command: |
