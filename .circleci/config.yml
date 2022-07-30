@@ -336,10 +336,10 @@ jobs:
             aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
       - revert-migrations:
           to: ${CIRCLE_WORKFLOW_ID:0:7}
-      - destroy-environment:
-          to: udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
-      - destroy-environment:
-          to: udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
+      #- destroy-environment:
+          #to: udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
+      #- destroy-environment:
+          #to: udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
 
   deploy-backend:
     docker:
@@ -382,10 +382,10 @@ jobs:
           command: |
             cd backend
             npm run build
-            tar-czf artifact.tar.gz dist/* package*
+            tar -czf artifact.tar.gz dist/* package*
 
             cd ..
-            cp backend/artifact.tar.gz ,circleci/ansible/roles/deploy/files
+            cp backend/artifact.tar.gz .circleci/ansible/roles/deploy/files
       - run:
           name: Deploy backend
           command: |
