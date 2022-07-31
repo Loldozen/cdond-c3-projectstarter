@@ -444,11 +444,11 @@ jobs:
             fi
       - revert-migrations:
           to: ${CIRCLE_WORKFLOW_ID:0:7}
-      - destroy-environment:
-          to: udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
-      - destroy-environment:
-          to: udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
-      - failure_notification
+      #- destroy-environment:
+          #to: udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
+      #- destroy-environment:
+          #to: udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
+      #- failure_notification
 
 workflows:
   default:
