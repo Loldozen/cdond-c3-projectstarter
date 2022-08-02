@@ -420,8 +420,8 @@ jobs:
           command: |
             export BACKEND_IP=$(aws ec2 describe-instances \
             --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-            --query 'Reservations[0].Instances[0].NetworkInterfaces[0].Association.PublicIp' ) | sed "s/^\([\"']\)\(.*\)\1\$/\2/g" 
-            export API_URL="http://${BACKEND_IP}:3030"
+            --query 'Reservations[0].Instances[0].NetworkInterfaces[0].Association.PublicIp' )
+            eval export API_URL="http://${BACKEND_IP}:3030"
             echo "${API_URL}"
     
             echo "here"
@@ -438,7 +438,7 @@ jobs:
             export BACKEND_IP=$(aws ec2 describe-instances \
             --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
             --query 'Reservations[0].Instances[0].NetworkInterfaces[0].Association.PublicIp' )
-            export API_URL="http://${BACKEND_IP}:3030"
+            eval export API_URL="http://${BACKEND_IP}:3030"
             URL="http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website-us-east-1.amazonaws.com/#/employees" 
             echo ${API_URL}
             if curl -s ${URL} | grep "Welcome"
