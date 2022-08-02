@@ -18,6 +18,7 @@
     become_user: root 
     become: true
     shell: |
+      cd ~/backend-app
       ls -la
       echo "NODE_ENV=production" >> .env
       echo "ENVIRONMENT=production" >> .env
