@@ -25,7 +25,9 @@ commands:
           name: Destroy environments
           when: on_fail
           command: |
-            aws cloudformation delete-stack --stack-name <<parameters.to>> 
+            aws s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
+            aws cloudformation delete-stack --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
+            aws cloudformation delete-stack --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7} 
   
   revert-migrations:
     description: Revert the last migration, if any were executed during current workflow
@@ -39,7 +41,7 @@ commands:
           when: on_fail
           command: |
             SUCCESS=$(curl --insecure https://kvdb.io/${KVDB_BUCKET}/migration_<<parameters.to>>)
-            if (( $SUCCESS == 1 ));
+            if (( $SUCCESS==1 ));
             then
               cd ~/project/backend
               npm install
@@ -202,10 +204,7 @@ jobs:
           root: ~/ 
           paths:
             - "project/.circleci/ansible/inventory.txt"
-      - destroy-environment:
-          to: udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
-      - destroy-environment:
-          to: udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
+      - destroy-environment
       - failure_notification
 
   configure-infrastructure:
@@ -240,10 +239,7 @@ jobs:
             cd .circleci/ansible
             cat inventory.txt
             ansible-playbook -i inventory.txt configure-server.yml
-      - destroy-environment:
-          to: udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
-      - destroy-environment:
-          to: udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
+      - destroy-environment
       - failure_notification      
 
   run-migrations:
@@ -281,10 +277,7 @@ jobs:
             fi
       - revert-migrations:
           to: ${CIRCLE_WORKFLOW_ID:0:7}
-      - destroy-environment:
-          to: udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
-      - destroy-environment:
-          to: udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
+      - destroy-environment
       - failure_notification 
   
   deploy-frontend:
@@ -340,10 +333,7 @@ jobs:
             aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
       - revert-migrations:
           to: ${CIRCLE_WORKFLOW_ID:0:7}
-      - destroy-environment:
-          to: udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
-      - destroy-environment:
-          to: udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
+      - destroy-environment
       - failure_notification 
 
   deploy-backend:
@@ -403,10 +393,7 @@ jobs:
             ansible-playbook -i inventory.txt deploy-backend.yml
       - revert-migrations:
           to: ${CIRCLE_WORKFLOW_ID:0:7}
-      - destroy-environment:
-          to: udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
-      - destroy-environment:
-          to: udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
+      - destroy-environment
       - failure_notification 
 
   smoke-test:
@@ -452,11 +439,8 @@ jobs:
             fi
       - revert-migrations:
           to: ${CIRCLE_WORKFLOW_ID:0:7}
-      - destroy-environment:
-          to: udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
-      - destroy-environment:
-          to: udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
-      #- failure_notification
+      - destroy-environment
+      - failure_notification
 
 workflows:
   default:
