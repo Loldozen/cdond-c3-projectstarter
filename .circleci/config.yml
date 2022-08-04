@@ -489,7 +489,7 @@ jobs:
             --stack-status-filter CREATE_COMPLETE --no-paginate --output text))
             echo Stack names: "${STACKS[@]}"
 
-            if [[ ${CIRCLE_WORKFLOW_ID:0:7} =~ ${OldWorkflowID} ]]
+            if [[ ${CIRCLE_WORKFLOW_ID:0:7} != ${OldWorkflowID} ]]
             then 
               echo CLEANUP SUCCESSFUL
               aws s3 rm "s3://udapeople-${OldWorkflowID}" --recursive
