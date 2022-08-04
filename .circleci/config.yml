@@ -451,6 +451,8 @@ jobs:
           name: Install dependencies
           command: |
             pip --no-cache-dir install --upgrade awscli
+      - attach_workspace:
+          at: ~/
       - run:
           name: Update cloudfront distribution
           command: |
@@ -459,6 +461,44 @@ jobs:
               --stack-name InitialStack \
               --parameter-overrides WorkflowID="udapeople-${CIRCLE_WORKFLOW_ID:0:7}" \
               --tags project=udapeople
+      - revert-migrations:
+          to: ${CIRCLE_WORKFLOW_ID:0:7}
+      - destroy-environment
+      - failure_notification
+  
+  cleanup:
+    docker:
+      - image: cimg/python:3.10.5
+    steps:
+      - checkout
+      - run: 
+          name: Install dependencies
+          command: |
+            pip --no-cache-dir install --upgrade awscli
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Get old stack workflow id
+          command: |
+            export OldWorkflowID=$(aws cloudformation \
+            list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
+            --no-paginate --output text )
+            echo OldWorkflowID: "${OldWorkflowID}"
+            echo CIRCLE_WORKFLOW_ID "${CIRCLE_WORKFLOW_ID:0:7}"
+            export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
+            --stack-status-filter CREATE_COMPLETE --no-paginate --output text))
+            echo Stack names: "${STACKS[@]}"
+
+            if [[ "${CIRCLE_WORKFLOW_ID:0:7}" =~ "${OldWorkflowID}" ]]
+            then 
+              aws s3 rm "s3://udapeople-${OldWorkflowID}" --recursive
+              aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"
+              aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"
+            else 
+              exit 0
+            fi
+
+
 
 workflows:
   default:
@@ -502,9 +542,12 @@ workflows:
       - cloudfront-update:
           requires:
             - "smoke-test"
+      - cleanup:
+          requires:
+            - cloufront-update
       - success_notifications:
           requires:
-            - cloudfront-update
+            - cleanup
           context:
             - org-global 
             - SlackNotification
