@@ -524,6 +524,9 @@ workflows:
             - test-frontend
             - scan-backend
             - scan-frontend
+          filters:
+            branches:
+              only: master
       - configure-infrastructure:
           requires:
             - "create-infrastructure"
