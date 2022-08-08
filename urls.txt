@@ -1,2 +1,2 @@
 - https://github.com/Loldozen/cdond-c3-projectstarter.git [URL01]
-- http://udapeople-cd5bbd0.s3-website-us-east-1.amazonaws.com [URL02]
+- http://udapeople-cd5bbd0.s3-website-us-east-1.amazonaws.com  [URL02]
